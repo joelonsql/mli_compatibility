@@ -1,18 +1,19 @@
 # mli_compatibility
-Check two mli files for definitions with compatible signatures
+Extract and normalize function signatures from .mli file
 
 ### Building
 Run `dune build`. The generated executable will then be in `./_build/default/mli_analyser.exe`.
 
 ### Usage
 
-    mli_analyser.exe file1.mli file2.mli
+    cd [the dit source dir] && ./for_each_commit.sh
 
-This will currently print the types of any value declared in both mli files.
+This will checkout all git commits,
+starting from the oldest,
+and run `./_build/default/mli_analyser.exe` for each git commit,
+and write all function signatures to `/tmp/sig.csv`.
 
-### Example Usage
+Install Signatures table and View_Changes view:
 
-    # ./_build/default/mli_analyser.exe examples/foo1.mli examples/foo2.mli
-    f: 'a list -> int -> ('a -> 'b) -> 'b  VS  'a list -> int -> ('a -> 'b) -> 'b
-    g: int -> int  VS  'a -> 'a
-    h: int -> int  VS  int -> int
+    `psql -f signatures.sql`
+    `psql -f view_changes.sql`
