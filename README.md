@@ -15,5 +15,5 @@ and write all function signatures to `/tmp/sig.csv`.
 
 Install Signatures table and View_Changes view:
 
-    `psql -f signatures.sql`
-    `psql -f view_changes.sql`
+    psql -f signatures.sql
+    psql -f view_changes.sql
