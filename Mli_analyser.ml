@@ -23,25 +23,26 @@ let create_map (f: 'a -> ('k * 'v) option) (xs: 'a list): ('k, 'v) map =
     List.fold_left ~f:folder ~init:Map.Poly.empty xs
 
 let () =
-    if Array.length Sys.argv <> 3
+    if Array.length Sys.argv <> 5
     then begin
-        Printf.eprintf "Usage: %s file1.mli file2.mli\n" Sys.argv.(0);
+        Printf.eprintf "Usage: %s file.mli git_repo git_commit git_timestamp\n" Sys.argv.(0);
         exit 1
     end
 
 let () = Lexer.init()
-let ast1 = parse_mli Sys.argv.(1)
-let ast2 = parse_mli Sys.argv.(2)
+let filename = Sys.argv.(1)
+let git_repo = Sys.argv.(2)
+let git_commit = Sys.argv.(3)
+let git_timestamp = Sys.argv.(4)
+let ast = parse_mli filename
 let get_name_and_type_of_val (item: signature_item): (string * core_type) option =
     match item.psig_desc with
     | Psig_value value_desc -> Some (value_desc.pval_name.txt, value_desc.pval_type)
     | _ -> None
 
-let file1_types = create_map get_name_and_type_of_val ast1
-let file2_types = create_map get_name_and_type_of_val ast2
-let () = Map.iter2 file1_types file2_types ~f:(fun ~key:name ~data ->
-    match data with
-    | `Both (type1, type2) ->
-        Format.printf "%s: %a  VS  %a@." name Pprintast.core_type type1 Pprintast.core_type type2
-    | _ -> ()
+let file_types = create_map get_name_and_type_of_val ast
+let () = Map.iteri file_types ~f:(fun ~key:name ~data ->
+    Format.set_margin 10010;
+    Format.set_max_indent 10000;
+    Format.printf "\"%s\",\"%s\",\"%s\",\"%s\",\"%a\",\"%s\"@." git_repo filename name git_timestamp Pprintast.core_type data git_commit
 )
